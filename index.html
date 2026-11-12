@@ -715,6 +715,27 @@ footer p {
         transition: none;
     }
 }
+    
+    /* BLOQUEO INICIAL DE LA INVITACIÓN */
+
+html.bloqueo-inicial,
+body.bloqueo-inicial {
+    overflow: hidden !important;
+    height: 100%;
+    overscroll-behavior: none;
+}
+
+body.bloqueo-inicial {
+    position: fixed;
+    width: 100%;
+    left: 0;
+    right: 0;
+}
+
+.portada {
+    min-height: 100vh;
+    min-height: 100dvh;
+}
 </style>
 </head>
 
@@ -1071,7 +1092,20 @@ footer p {
 /* =================================
    CONFIGURACION DE LA BODA
 ================================= */
+/* =================================
+   BLOQUEO INICIAL SOLO EN CELULARES
+================================= */
 
+let invitacionAbierta = false;
+
+const esCelular = window.matchMedia("(max-width: 768px)").matches;
+
+if (esCelular) {
+    document.documentElement.classList.add("bloqueo-inicial");
+    document.body.classList.add("bloqueo-inicial");
+
+    window.scrollTo(0, 0);
+}
 const BODA = {
     nombre1: "Laura",
     nombre2: "Yesid",
@@ -1162,15 +1196,28 @@ document.getElementById("whatsapp").href = `https://wa.me/${BODA.whatsapp}?text=
 ================================= */
 
 document.getElementById("abrir").addEventListener("click", function() {
-    // Iniciar reproducción de música al hacer clic en 'Abrir'
+
+    if (invitacionAbierta) return;
+
+    invitacionAbierta = true;
+
+    // Iniciar música
     if (audio.paused) {
         alternarAudio();
     }
 
+    // Desbloquear únicamente si es celular
+    if (esCelular) {
+        document.documentElement.classList.remove("bloqueo-inicial");
+        document.body.classList.remove("bloqueo-inicial");
+    }
+
+    // Desplazamiento hacia la invitación
     document.getElementById("historia").scrollIntoView({
         behavior: "smooth",
         block: "start"
     });
+
 });
 
 /* =================================
