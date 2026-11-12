@@ -736,6 +736,55 @@ body.bloqueo-inicial {
     min-height: 100vh;
     min-height: 100dvh;
 }
+
+    /* =================================
+   ANIMACIÓN DE APERTURA DE PORTADA
+================================= */
+
+.portada {
+    transform-origin: center center;
+    will-change: opacity, transform, filter;
+}
+
+/* Animación de salida */
+.portada.abriendo {
+    animation: salidaPortada 1s cubic-bezier(.65, 0, .35, 1) forwards;
+    pointer-events: none;
+}
+
+.portada.abriendo .tarjeta-portada {
+    animation: salidaTarjeta 0.85s ease-in forwards;
+}
+
+@keyframes salidaPortada {
+    0% {
+        opacity: 1;
+        filter: blur(0);
+    }
+
+    100% {
+        opacity: 0;
+        filter: blur(8px);
+        visibility: hidden;
+    }
+}
+
+@keyframes salidaTarjeta {
+    0% {
+        transform: scale(1);
+    }
+
+    100% {
+        transform: scale(.94) translateY(-15px);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .portada.abriendo,
+    .portada.abriendo .tarjeta-portada {
+        animation-duration: .2s;
+    }
+}
 </style>
 </head>
 
@@ -1194,6 +1243,12 @@ document.getElementById("whatsapp").href = `https://wa.me/${BODA.whatsapp}?text=
 /* =================================
    ANIMACION DE APERTURA
 ================================= */
+/* =================================
+   APERTURA ANIMADA DE LA INVITACIÓN
+================================= */
+
+const botonAbrir = document.getElementById("abrir");
+const portada = document.getElementById("portada");
 
 document.getElementById("abrir").addEventListener("click", function() {
 
@@ -1201,22 +1256,32 @@ document.getElementById("abrir").addEventListener("click", function() {
 
     invitacionAbierta = true;
 
+    // Evitar múltiples clics
+    botonAbrir.disabled = true;
+
     // Iniciar música
     if (audio.paused) {
         alternarAudio();
     }
 
-    // Desbloquear únicamente si es celular
+    // Iniciar animación de salida
+    portada.classList.add("abriendo");
+
+    // Desbloquear desplazamiento en celulares
     if (esCelular) {
         document.documentElement.classList.remove("bloqueo-inicial");
         document.body.classList.remove("bloqueo-inicial");
     }
 
-    // Desplazamiento hacia la invitación
-    document.getElementById("historia").scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-    });
+    // Esperar a que termine la animación
+    setTimeout(() => {
+
+        document.getElementById("historia").scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+
+    }, 900);
 
 });
 
